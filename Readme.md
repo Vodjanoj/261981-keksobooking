@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Vladimir Vodjanoj](https://up.htmlacademy.ru/javascript/11/user/261981).
-* Наставник: `Неизвестно`.
+* Наставник: [Александр Чудновский](https://htmlacademy.ru/profile/id29109).
 
 ---
 
