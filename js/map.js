@@ -87,14 +87,45 @@ for (var i = 0; i <= 7; i++) {
   finalOffLocX = getRandomNumb(locationMinX, locationMaxX);
   finalOffLocY = getRandomNumb(locationMinY, locationMaxY);
 
-  offers_around.push({author: {avatar: finalRandomAuthAvatElement}, offer: {title: finalRandomOffTitlElement, adress: {X: OFFER_ADDRESS[0], Y: OFFER_ADDRESS[1]},
+  offers_around.push({author: {avatar: finalRandomAuthAvatElement}, offer: {title: finalRandomOffTitlElement, adress: finalOffLocX + ',' + finalOffLocY,
                       price: priceOffRandom, type: finalOffType, rooms: finalRoomsCount, guests: finalGuestsCount, checkin: finalOffCheckin, checkout: finalOffCheckout, 
                       features: finalOffList, description: OFFER_DESCRIPTION, photos: OFFER_PHOTOS}, location: {x: finalOffLocX, y: finalOffLocY}});
 }  
 
 console.log(offers_around);
 
+var userDialog = document.querySelector('.map');
+userDialog.classList.remove('map--faded');
  
+
+debugger; 
+
+ 
+var mapPinElement = document.querySelector('.map__pin');
+
+var fragment = document.createDocumentFragment();
+
+for (var i = 1; i < 8; i++) {
+ 
+var button = document.createElement('button');
+button.setAttribute('style', offers_around[i].author);
+button.setAttribute('class', 'map__pin');
+
+var img = document.createElement('img'); 
+button.appendChild(img);
+ 
+img.setAttribute('width', '40');
+img.setAttribute('height', '40');
+img.draggable = false;
+
+fragment.appendChild(button);
+} 
+
+mapPinElement.appendChild(fragment);
+
+
+
+
 
   // offers_around.push({author: {avatar: avoidDublicates(AUTHOR_AVATAR[Math.floor(Math.random() * AUTHOR_AVATAR.length)], offers_around)}});
  
