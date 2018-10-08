@@ -26,18 +26,12 @@ var OFFER_PHOTOS = [];
 var offers_around = [];
 
 var offersMinPrice = 1000;
-
+ 
 var offersMaxPrice = 1000000;
 
 var offersMinRooms = 1;
 
 var offersMaxRooms = 5;
-
-var offersMinGuests = 1;
-
-var offersMaxGuests = 25;
-
-var offersMaxGuests = 25;
 
 var featuresMinLength = 1;
 
@@ -48,6 +42,17 @@ var locationMaxX = 900;
 var locationMinY = 100;
 
 var locationMaxY = 500;
+
+var offersMinGuests = 1;
+
+var offersMaxGuests = 35;
+
+
+var PROPERTY_OPTIONS = {AVAT: AUTHOR_AVATAR, OFFTITLE: OFFER_TITLE, OFFADDRESS: OFFER_ADDRESS, OFFTYPE: OFFER_TYPE, OFFROOMS: OFFER_ROOMS,
+                        OFFGUESTS: OFFER_GUESTS, OFFCHINCHOUT: OFFER_CHECKIN_CHECKOUT, OFFFEAT: OFFER_FEATURES, OFFDESCR: OFFER_DESCRIPTION,
+                        OFFPHOTOS: OFFER_PHOTOS, OFFAROUND: offers_around, OFFMNPR: offersMinPrice, OFFMXPR: offersMaxPrice, OFFMNRMS: offersMinRooms,
+                        OFFMXRMS: offersMaxRooms, OFFMINGS: offersMinGuests, OFFMXGS: offersMaxGuests, OFFFEATMNLNGS: featuresMinLength,
+                        OFFLOCMNX: locationMinX, OFFLOCMXX: locationMaxX, OFFLOCMNY: locationMinY, OFFLOCMXY: locationMaxY};
 
 var avoidDublicates = function(randomElement, arr) {
   return arr.splice(arr.indexOf(randomElement),1)[0]; 
@@ -61,36 +66,38 @@ var getRandomFeatures = function(randomArrLength, arr) {
   return  arr.slice(0, randomArrLength); 
 }
 
- var finalRandomAuthAvatElement;
- var finalRandomOffTitlElement;
- var priceOffRandom;
- var finalOffType;
- var finalRoomsCount;
- var finalGuestsCount;
- var finalOffCheckin;
- var finalOffCheckout;
- var finalOffList;
- var finalOffLocX;
- var finalOffLocY;
+var finalRandomAuthAvatElement = '';
+var finalRandomOffTitlElement = '';
+var priceOffRandom = 0;
+var finalOffType = '';
+var finalRoomsCount = '';
+var finalGuestsCount = 0;
+var finalOffCheckin = '';
+var finalOffCheckout = '';
+var finalOffList = '';
+var finalOffLocX = 0;
+var finalOffLocY = 0;
 
 for (var i = 0; i <= 7; i++) {
   
-  finalRandomAuthAvatElement = avoidDublicates(AUTHOR_AVATAR[Math.floor(Math.random() * AUTHOR_AVATAR.length)], AUTHOR_AVATAR); 
-  finalRandomOffTitlElement = avoidDublicates(OFFER_TITLE[Math.floor(Math.random() * OFFER_TITLE.length)], OFFER_TITLE);
-  priceOffRandom = getRandomNumb(offersMinPrice, offersMaxPrice);
-  finalOffType = OFFER_TYPE[Math.floor(Math.random() * OFFER_TYPE.length)];
-  finalRoomsCount = getRandomNumb(offersMinRooms, offersMaxRooms);
-  finalGuestsCount = getRandomNumb(offersMinGuests, offersMaxGuests);
-  finalOffCheckin = OFFER_CHECKIN_CHECKOUT[Math.floor(Math.random() * OFFER_CHECKIN_CHECKOUT.length)];
-  finalOffCheckout = OFFER_CHECKIN_CHECKOUT[Math.floor(Math.random() * OFFER_CHECKIN_CHECKOUT.length)];
-  finalOffList = getRandomFeatures(getRandomNumb(featuresMinLength, OFFER_FEATURES.length), OFFER_FEATURES);
-  finalOffLocX = getRandomNumb(locationMinX, locationMaxX);
-  finalOffLocY = getRandomNumb(locationMinY, locationMaxY);
-
-  offers_around.push({author: {avatar: finalRandomAuthAvatElement}, offer: {title: finalRandomOffTitlElement, adress: finalOffLocX + ',' + finalOffLocY,
+  finalRandomAuthAvatElement = avoidDublicates(PROPERTY_OPTIONS.AVAT[Math.floor(Math.random() * PROPERTY_OPTIONS.AVAT.length)], PROPERTY_OPTIONS.AVAT); 
+  finalRandomOffTitlElement = avoidDublicates(PROPERTY_OPTIONS.OFFTITLE[Math.floor(Math.random() * PROPERTY_OPTIONS.OFFTITLE.length)], PROPERTY_OPTIONS.OFFTITLE);
+  priceOffRandom = getRandomNumb(PROPERTY_OPTIONS.OFFMNPR, PROPERTY_OPTIONS.OFFMXPR);
+  finalOffType = PROPERTY_OPTIONS.OFFTYPE[Math.floor(Math.random() * PROPERTY_OPTIONS.OFFTYPE.length)];
+  finalRoomsCount = getRandomNumb(PROPERTY_OPTIONS.OFFMNRMS, PROPERTY_OPTIONS.OFFMXRMS);
+  finalGuestsCount = getRandomNumb(PROPERTY_OPTIONS.OFFMINGS, PROPERTY_OPTIONS.OFFMXGS);
+  finalOffCheckin = PROPERTY_OPTIONS.OFFCHINCHOUT[Math.floor(Math.random() * PROPERTY_OPTIONS.OFFCHINCHOUT.length)];  
+  finalOffCheckout = PROPERTY_OPTIONS.OFFCHINCHOUT[Math.floor(Math.random() * PROPERTY_OPTIONS.OFFCHINCHOUT.length)];
+  finalOffList = getRandomFeatures(getRandomNumb(PROPERTY_OPTIONS.OFFFEATMNLNGS, PROPERTY_OPTIONS.OFFFEAT.length), PROPERTY_OPTIONS.OFFFEAT);
+  finalOffLocX = getRandomNumb(PROPERTY_OPTIONS.OFFLOCMNX, PROPERTY_OPTIONS.OFFLOCMXX);
+  finalOffLocY = getRandomNumb(PROPERTY_OPTIONS.OFFLOCMNY, PROPERTY_OPTIONS.OFFLOCMXY);
+  
+  PROPERTY_OPTIONS.OFFAROUND.push({author: {avatar: finalRandomAuthAvatElement}, offer: {title: finalRandomOffTitlElement, adress: finalOffLocX + ',' + finalOffLocY,
                       price: priceOffRandom, type: finalOffType, rooms: finalRoomsCount, guests: finalGuestsCount, checkin: finalOffCheckin, checkout: finalOffCheckout, 
-                      features: finalOffList, description: OFFER_DESCRIPTION, photos: OFFER_PHOTOS}, location: {x: finalOffLocX, y: finalOffLocY}});
-}  
+                      features: finalOffList, description: PROPERTY_OPTIONS.OFFDESCR, photos: PROPERTY_OPTIONS.OFFPHOTOS}, location: {x: finalOffLocX, y: finalOffLocY}});
+} 
+
+console.log(PROPERTY_OPTIONS.OFFAROUND);
 
 var userDialog = document.querySelector('.map');
 userDialog.classList.remove('map--faded');
@@ -100,16 +107,16 @@ var correctionY = 40; // смещение метки по Y чтобы на ко
 
 var fragment = document.createDocumentFragment();
 
-for (var i = 0; i < offers_around.length; i++) {
+for (var i = 0; i < PROPERTY_OPTIONS.OFFAROUND.length; i++) {
  
 var button = document.createElement('button');
-button.setAttribute('style','left: ' + offers_around[i].location.x + 'px' + '; ' + 'top: ' + (offers_around[i].location.y - correctionY) + 'px');
+button.setAttribute('style','left: ' + PROPERTY_OPTIONS.OFFAROUND[i].location.x + 'px' + '; ' + 'top: ' + (PROPERTY_OPTIONS.OFFAROUND[i].location.y - correctionY) + 'px');
 button.setAttribute('class', 'map__pin');
 
 var img = document.createElement('img'); 
 button.appendChild(img);
  
-img.setAttribute('src', offers_around[i].author.avatar); 
+img.setAttribute('src', PROPERTY_OPTIONS.OFFAROUND[i].author.avatar); 
 img.setAttribute('width', '40');
 img.setAttribute('height', '40');
 img.draggable = false;
@@ -123,24 +130,39 @@ var similarOfferTemplate = document.querySelector('template').content;
 
 var offerElement = similarOfferTemplate.cloneNode(true);
 
-offerElement.querySelector('h3').textContent = offers_around[0].offer.title;
-offerElement.querySelector('small').textContent = offers_around[0].offer.adress;
-offerElement.querySelector('.popup__price').textContent = offers_around[0].offer.price + '&#x20bd;/ночь';
-offerElement.querySelector('h4').textContent = offers_around[0].offer.type;
-offerElement.querySelectorAll('p')[2].textContent = offers_around[0].offer.rooms + ' комнат для ' + offers_around[0].offer.guests + ' гостей';
-offerElement.querySelectorAll('p')[3].textContent = 'Заезд после ' + offers_around[0].offer.checkin + ', ' + 'выезд до ' + offers_around[0].offer.checkout;
+offerElement.querySelector('h3').textContent = PROPERTY_OPTIONS.OFFAROUND[0].offer.title;
+offerElement.querySelector('small').textContent = PROPERTY_OPTIONS.OFFAROUND[0].offer.adress;
+offerElement.querySelector('.popup__price').textContent = (PROPERTY_OPTIONS.OFFAROUND[0].offer.price + ' \u20BD/ночь');
+ 
+
+
+if (PROPERTY_OPTIONS.OFFAROUND[0].offer.type == 'bungalo') {
+    offerElement.querySelector('h4').textContent = 'Бунгало';
+  } else if (PROPERTY_OPTIONS.OFFAROUND[0].offer.type == 'flat') {
+    offerElement.querySelector('h4').textContent = 'Квартира';
+  } else {
+    offerElement.querySelector('h4').textContent = 'Дом';
+}
+
+
+
+
+offerElement.querySelectorAll('p')[2].textContent = PROPERTY_OPTIONS.OFFAROUND[0].offer.rooms + ' комнат для ' + PROPERTY_OPTIONS.OFFAROUND[0].offer.guests + ' гостей';
+offerElement.querySelectorAll('p')[3].textContent = 'Заезд после ' + PROPERTY_OPTIONS.OFFAROUND[0].offer.checkin + ', ' + 'выезд до ' + PROPERTY_OPTIONS.OFFAROUND[0].offer.checkout;
 
 for (var i = 0; i < offerElement.querySelector('.popup__features').children.length; i++) {
     
-  offerElement.querySelector('.popup__features').children[i].textContent = offers_around[0].offer.features[i];
+  offerElement.querySelector('.popup__features').children[i].textContent = PROPERTY_OPTIONS.OFFAROUND[0].offer.features[i];
 } 
 
-offerElement.querySelectorAll('p')[4].textContent = offers_around[0].offer.description;
-offerElement.querySelector('.popup__pictures').children[0].setAttribute('src', offers_around[0].author.avatar);
+offerElement.querySelectorAll('p')[4].textContent = PROPERTY_OPTIONS.OFFAROUND[0].offer.description;
+offerElement.querySelector('.popup__avatar').setAttribute('src', PROPERTY_OPTIONS.OFFAROUND[0].author.avatar);
 
 var mapWhole = document.querySelector('.map');
 
 mapWhole.insertBefore(offerElement, mapWhole.children[1]);
+
+
 
 // var beforeTheElement = document.body.children[1].children[0].children[1]; // maps-filter-container
 
@@ -151,9 +173,9 @@ mapWhole.insertBefore(offerElement, mapWhole.children[1]);
 //document.querySelector('.map__filters-container').insertBefore(offerElement, document.querySelector('.map__filters-container'));
  
 
- // for (var i = 0; i < offers_around[0].offer.features.length; i++) {
+ // for (var i = 0; i < PROPERTY_OPTIONS.OFFAROUND[0].offer.features.length; i++) {
     
-  // offerElement.querySelector('.feature.feature--wifi').textContent = offers_around[0].offer.features[i];
+  // offerElement.querySelector('.feature.feature--wifi').textContent = PROPERTY_OPTIONS.OFFAROUND[0].offer.features[i];
 
 //} 
 
@@ -163,14 +185,14 @@ mapWhole.insertBefore(offerElement, mapWhole.children[1]);
 
 
 
-  // offers_around.push({author: {avatar: avoidDublicates(AUTHOR_AVATAR[Math.floor(Math.random() * AUTHOR_AVATAR.length)], offers_around)}});
+  // PROPERTY_OPTIONS.OFFAROUND.push({author: {avatar: avoidDublicates(AUTHOR_AVATAR[Math.floor(Math.random() * AUTHOR_AVATAR.length)], PROPERTY_OPTIONS.OFFAROUND)}});
 
   // offerElement.querySelector('.feature.feature--wifi').textContent = 'Привееет'; 
  
  /*
  for (var j = 0; j <= 4; i++) {
-  if (temp !== offers_around[j].author) {
-    offers_around.push({author: {avatar: temp}}); 
+  if (temp !== PROPERTY_OPTIONS.OFFAROUND[j].author) {
+    PROPERTY_OPTIONS.OFFAROUND.push({author: {avatar: temp}}); 
 
     return arr.splice(arr.indexOf(el),1)[0]; будет хранится в 0 элементе
 
