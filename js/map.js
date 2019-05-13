@@ -1,5 +1,6 @@
 'use strict';
 
+
 var adAllOptions = {
   AVATARS: [
     'img/avatars/user01.png', 
@@ -61,15 +62,15 @@ var adAllOptions = {
 };
 
 var completeOffer = [];
-
-var userDialog = document.querySelector('.map');
-userDialog.classList.remove('map--faded');
-var mapWhole = document.querySelector('.map');
-var mapPinElement = document.querySelector('.map__pins');
+var mapWhole = document.querySelector('.map'); 
+mapWhole.classList.remove('map--faded'); 
+var mapPinContainer = document.querySelector('.map__pins');
 var correctionY = 40; // смещение метки по Y чтобы на координату указывал именно острый конец метки
 var fragment = document.createDocumentFragment();
 var similarOfferTemplate = document.querySelector('template').content;
+var mapPinTemplate = document.querySelector('template').content.querySelector('.map__pin');
 var offerElement = similarOfferTemplate.cloneNode(true);
+
 
 var avoidDublicates = function(randomElement, arr) {
   return arr.splice(arr.indexOf(randomElement),1)[0]; 
@@ -84,12 +85,13 @@ var getRandomFeatures = function(randomArrLength, arr) {
 }
  
 var generateOfferList = function(arr) { 
+  
   var offrAvatar = avoidDublicates(adAllOptions.AVATARS[Math.floor(Math.random() * adAllOptions.AVATARS.length)], adAllOptions.AVATARS); 
   var offrTitle = avoidDublicates(adAllOptions.TITLES[Math.floor(Math.random() * adAllOptions.TITLES.length)], adAllOptions.TITLES);
   var offrrPrice = getRandomNumb(adAllOptions.MIN_PRICE, adAllOptions.MAX_PRICE);
   var offrType = adAllOptions.TYPE[Math.floor(Math.random() * adAllOptions.TYPE.length)];
   var offrRooms = getRandomNumb(adAllOptions.MIN_ROOMS, adAllOptions.MAX_ROOMS);
-  var offrGuests = getRandomNumb(adAllOptions.MAX_GUESTS, adAllOptions.MAX_GUESTS);
+  var offrGuests = getRandomNumb(adAllOptions.MIN_GUESTS, adAllOptions.MAX_GUESTS);
   var offrChkin = adAllOptions.CHECKIN_CHECKOUT[Math.floor(Math.random() * adAllOptions.CHECKIN_CHECKOUT.length)];
   var offrChckout = adAllOptions.CHECKIN_CHECKOUT[Math.floor(Math.random() * adAllOptions.CHECKIN_CHECKOUT.length)];
   var offrFeatList = getRandomFeatures(getRandomNumb(adAllOptions.MIN_QUANT_FEATURES, adAllOptions.FEATURES.length), adAllOptions.FEATURES);
@@ -119,52 +121,85 @@ var generateOfferList = function(arr) {
                   });
 } 
 
+
 for (var i = 0; i <= 7; i++) {
   completeOffer[i] = generateOfferList(completeOffer)   
 } 
+
+
+var renderPin = function(pin) {
+
+    var mapPinElement = mapPinTemplate.cloneNode(true);
+
+    mapPinElement.style.left = pin.location.x + 'px';
+    mapPinElement.style.top = pin.location.y - correctionY +'px';
+    mapPinElement.querySelector('img').src = pin.author.avatar;
+
+    return mapPinElement;
  
+  } 
+
 for (var i = 0; i < completeOffer.length; i++) {
- 
-var button = document.createElement('button');
-button.setAttribute('style','left: ' + completeOffer[i].location.x + 'px' + '; ' + 'top: ' + (completeOffer[i].location.y - correctionY) + 'px');
-button.setAttribute('class', 'map__pin');
 
-var img = document.createElement('img'); 
-button.appendChild(img);
+ fragment.appendChild(renderPin(completeOffer[i]));
  
-img.setAttribute('src', completeOffer[i].author.avatar); 
-img.setAttribute('width', '40');
-img.setAttribute('height', '40');
-img.draggable = false;
-
-fragment.appendChild(button);
 } 
 
-mapPinElement.appendChild(fragment);
+mapPinContainer.appendChild(fragment);
 
-offerElement.querySelector('h3').textContent = completeOffer[0].offer.title;
-offerElement.querySelector('small').textContent = completeOffer[0].offer.adress;
-offerElement.querySelector('.popup__price').textContent = (completeOffer[0].offer.price + ' \u20BD/ночь');
+    
+var renderList = function(features) {
+
+    var featuresFragment = document.createDocumentFragment();
+     
+    for (var i = 0; i < features.length; i++) {
+    var listItem = document.createElement('li');
+    listItem.classList.add('feature', 'feature--' + features[i]);
+    featuresFragment.appendChild(listItem);
+  }
+
+    return featuresFragment;
+}
  
-if (completeOffer[0].offer.type == 'bungalo') {
-    offerElement.querySelector('h4').textContent = 'Бунгало';
-  } else if (completeOffer[0].offer.type == 'flat') {
-    offerElement.querySelector('h4').textContent = 'Квартира';
+var renderCard = function(elem) {
+
+var mapElement = similarOfferTemplate.cloneNode(true);
+var mapCardP = mapElement.querySelectorAll('p');
+var mapCardFeatLst = mapElement.querySelectorAll('popup__features');
+ 
+mapElement.querySelector('h3').textContent = elem.offer.title;
+
+mapElement.querySelector('small').textContent = elem.offer.adress;
+
+mapElement.querySelector('.popup__price').textContent = (elem.offer.price + ' \u20BD/ночь');
+
+if (elem.offer.type == 'bungalo') {
+    mapElement.querySelector('h4').textContent = 'Бунгало';
+  } else if (elem.offer.type == 'flat') {
+    mapElement.querySelector('h4').textContent = 'Квартира';
   } else {
-    offerElement.querySelector('h4').textContent = 'Дом';
+    mapElement.querySelector('h4').textContent = 'Дом';
 }
 
-offerElement.querySelectorAll('p')[2].textContent = completeOffer[0].offer.rooms + ' комнат для ' + completeOffer[0].offer.guests + ' гостей';
-offerElement.querySelectorAll('p')[3].textContent = 'Заезд после ' + completeOffer[0].offer.checkin + ', ' + 'выезд до ' + completeOffer[0].offer.checkout;
+mapCardP[2].textContent = elem.offer.rooms + ' комнат для ' + elem.offer.guests + ' гостей';
 
-for (var i = 0; i < offerElement.querySelector('.popup__features').children.length; i++) {
-    
-  offerElement.querySelector('.popup__features').children[i].textContent = completeOffer[0].offer.features[i];
-} 
+mapCardP[3].textContent = 'Заезд после ' + elem.offer.checkin + ', ' + 'выезд до ' + elem.offer.checkout;
+ 
+      
+var list = mapElement.querySelector('.popup__features');
+list.textContent = '';
+ 
+list.appendChild(renderList(elem.offer.features));
+ 
+mapElement.querySelectorAll('p')[4].textContent = elem.offer.description;
 
-offerElement.querySelectorAll('p')[4].textContent = completeOffer[0].offer.description;
-offerElement.querySelector('.popup__avatar').setAttribute('src', completeOffer[0].author.avatar);
+mapElement.querySelector('img').src = elem.author.avatar;
 
-mapWhole.insertBefore(offerElement, mapWhole.children[1]);
+return mapElement;
 
+}
+  
+var cardFragment = document.createDocumentFragment();
+cardFragment.appendChild(renderCard(completeOffer[0]));
+mapWhole.appendChild(cardFragment); 
 
